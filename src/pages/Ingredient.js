@@ -1,64 +1,21 @@
-import React, { useState, useEffect } from 'react';
-import { useSelector } from "react-redux";
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
-import { db, leftJoinForGetNutrients } from '../store/db';
+import { getIngredientAction } from '../store/actions/ingredients';
 
-export default function IngredientPage (router) {
-  const list2 = useSelector(state => state);
+export default function IngredientPage(router) {
+  const dispatch = useDispatch();
   const id = router.match.params.ingredientId;
-  
-  console.log(12323, list2);
-
-  const [list, setList] = useState({});
+  const ingredient = useSelector(state => state.ingredient);
 
   useEffect(() => {
-    db.transaction((tx) => {
-      // Список ингридиентов
-      tx.executeSql(`
-        SELECT
-          DISTINCT ingredients.id,
-          ingredients.name,
-          
-          kcal.count as kcal,
-          proteins.count as proteins,
-          carbohydrates.count as carbohydrates,
-          fats.count as fats,
-          d3.count as d3,
-          b12.count as b12,
-          a.count as a,
-          c.count as c,
-          dietary_fiber.count as dietary_fiber,
-          water.count as water,
-          glucose.count as glucose,
-          fructose.count as fructose
-
-        FROM ingredients
-          ${leftJoinForGetNutrients('kcal')}
-          ${leftJoinForGetNutrients('proteins')}
-          ${leftJoinForGetNutrients('carbohydrates')}
-          ${leftJoinForGetNutrients('fats')}
-
-          ${leftJoinForGetNutrients('d3')}
-          ${leftJoinForGetNutrients('b12')}
-          ${leftJoinForGetNutrients('a')}
-          ${leftJoinForGetNutrients('c')}
-          ${leftJoinForGetNutrients('dietary_fiber')}
-          ${leftJoinForGetNutrients('water')}
-          ${leftJoinForGetNutrients('glucose')}
-          ${leftJoinForGetNutrients('fructose')}
-
-        WHERE ingredients.id=${id}  
-
-      `, [], (tx, result) => {
-        setList(result.rows);
-      }, null)
-    });
-  }, [id]);
+    dispatch(getIngredientAction(id));
+  }, [id, dispatch]);
 
   const {
     name, kcal, proteins, carbohydrates, fats, water,
     glucose, fructose, dietary_fiber, a, c, b12, d3
-  } = list[0] || {};
+  } = ingredient || {};
   
   return (
     <div>

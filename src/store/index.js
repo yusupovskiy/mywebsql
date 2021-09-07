@@ -1,5 +1,7 @@
-import { createStore } from 'redux';
+import { createStore, applyMiddleware } from 'redux';
 import rootReducers from './reducers';
+import { composeWithDevTools } from 'redux-devtools-extension';
+import thunk from 'redux-thunk';
 
 // convert object to string and store in localStorage
 function saveToLocalStorage(state) {
@@ -26,11 +28,11 @@ function loadFromLocalStorage() {
 
 // create our store from our rootReducers and use loadFromLocalStorage
 // to overwrite any values that we already have saved
-const store = createStore(rootReducers, { ingredients: [12, 2] });
+const store = createStore(rootReducers, composeWithDevTools(applyMiddleware(thunk)));
 // const store = createStore(rootReducers, loadFromLocalStorage());
 
 // listen for store changes and use saveToLocalStorage to
 // save them to localStorage
-store.subscribe(() => saveToLocalStorage(store.getState()));
+// store.subscribe(() => saveToLocalStorage(store.getState()));
 
 export default store;
