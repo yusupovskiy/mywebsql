@@ -6,6 +6,7 @@ export const getIngredients = () => dispatch => {
     tx.executeSql(`
       SELECT
         DISTINCT ingredients.id,
+        ingredients.rowid,
         ingredients.name,
         
         kcal.count as kcal,
@@ -17,8 +18,7 @@ export const getIngredients = () => dispatch => {
         ${leftJoinForGetNutrients('kcal')}
         ${leftJoinForGetNutrients('proteins')}
         ${leftJoinForGetNutrients('carbohydrates')}
-        ${leftJoinForGetNutrients('fats')}
-          
+        ${leftJoinForGetNutrients('fats')}          
     `, [], (tx, { rows }) => {
       dispatch({ type: 'FETCH_INGREDIENTS_SUCCESS', payload: rows });
     }, (qyery, error) => dispatch({ type: 'FETCH_INGREDIENTS_FAILED', error }));

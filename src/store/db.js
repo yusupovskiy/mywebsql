@@ -1,4 +1,3 @@
-
 export const db = openDatabase("Food", "0.1", "A list of foods.", 200000);
 
 export const initDB = () => {
@@ -8,13 +7,31 @@ export const initDB = () => {
         "SELECT COUNT(*) FROM ingredients",
         [],
         null,
-        (tx, error) => {
+        tx => {
           tx.executeSql(`
-            CREATE TABLE ingredients (
-              id REAL UNIQUE,
-              name TEXT
-            )
-          `);
+              CREATE TABLE ingredients (
+                id INTEGER PRIMARY KEY ASC AUTOINCREMENT,
+                name TEXT
+              )
+            `,
+            [],
+            tx => {
+              tx.executeSql(`
+                INSERT INTO ingredients (name)
+                  values
+                    ('Огурец'),
+                    ('Помидор'),
+                    ('Перец'),
+                    ('Маринованные огурцы Царицыно'),
+                    ('Маринованные огурцы Исмаил'),
+                    ('Макароны'),
+                    ('Фарш'),
+                    ('Макароны по флотски'),
+                    ('Сахар Прессованный [Русский Сахар]')
+              `);
+            },
+            (qyery, error) => alert(error.message)
+          );
         }
       );
 
@@ -25,10 +42,31 @@ export const initDB = () => {
         (tx, error) => {
           tx.executeSql(`
             CREATE TABLE nutrients (
-              id REAL UNIQUE,
+              id INTEGER PRIMARY KEY ASC AUTOINCREMENT,
               slug TEXT UNIQUE
-            )
-          `, [], null, null);
+            )`,
+            [],
+            tx => {
+              tx.executeSql(`
+                INSERT INTO nutrients (slug)
+                  values
+                    ('kcal'),
+                    ('proteins'),
+                    ('b_car'),
+                    ('carbohydrates'),
+                    ('fats'),
+                    ('d3'),
+                    ('b12'),
+                    ('a'),
+                    ('c'),
+                    ('dietary_fiber'),
+                    ('water'),
+                    ('glucose'),
+                    ('fructose')
+              `);
+            },
+            (qyery, error) => alert(error.message)
+          );
         }
       );
 
@@ -39,68 +77,39 @@ export const initDB = () => {
         (tx, error) => {
           tx.executeSql(`
             CREATE TABLE ingredients_nutrients (
-              id REAL UNIQUE,
+              id INTEGER PRIMARY KEY ASC AUTOINCREMENT,
               ingredient_id INTEGER,
               nutrient_id INTEGER,
               count INTEGER,
               unit TEXT
-            )
-          `, [], null, null);
+            )`,
+            [],
+            tx => {
+              tx.executeSql(`
+                INSERT INTO ingredients_nutrients (ingredient_id, nutrient_id, count, unit)
+                  values
+                    (1, 1, 18, 'kcal'),
+                    (1, 2, 0.9, 'g'),
+                    (1, 4, 2.7, 'g'),
+                    (1, 5, 0.2, 'g'),
+                    (1, 11, 95, 'g'),
+                    (1, 8, 42, 'mcg'),
+                    (1, 7, 0, 'mcg'),
+                    (1, 6, 0, 'mcg'),
+                    (1, 9, 13.7, 'mg'),
+                    (1, 3, 0.449, 'mg'),
+                    (1, 12, 1.25, 'g'),
+                    (1, 13, 1.37, 'g'),
+                    (2, 1, 222, 'kcal')
+              `);
+            },
+            (qyery, error) => alert(error.message)
+          );
         }
       );
     },
     err => console.error("База не создана", err),
-    () => {
-      db.transaction(tx => {
-        tx.executeSql(`
-          INSERT INTO ingredients (id, name)
-            values
-              (1, 'Огурец'),
-              (2, 'Помидор'),
-              (4, 'Перец'),
-              (5, 'Маринованные огурцы Царицыно'),
-              (6, 'Маринованные огурцы Исмаил'),
-              (7, 'Макароны'),
-              (8, 'Фарш'),
-              (9, 'Макароны по флотски'),
-              (10, 'Сахар Прессованный [Русский Сахар]')
-        `);
-        tx.executeSql(`
-          INSERT INTO nutrients (id, slug)
-            values
-              (1, 'kcal'),
-              (2, 'proteins'),
-              (3, 'b_car'),
-              (4, 'carbohydrates'),
-              (5, 'fats'),
-              (6, 'd3'),
-              (7, 'b12'),
-              (8, 'a'),
-              (9, 'c'),
-              (10, 'dietary_fiber'),
-              (11, 'water'),
-              (12, 'glucose'),
-              (13, 'fructose')
-        `, [], null, (qyery, error) => alert(error.message));
-        tx.executeSql(`
-          INSERT INTO ingredients_nutrients (id, ingredient_id, nutrient_id, count, unit)
-            values
-              (1, 1, 1, 18, 'kcal'),
-              (2, 1, 2, 0.9, 'g'),
-              (3, 1, 4, 2.7, 'g'),
-              (4, 1, 5, 0.2, 'g'),
-              (5, 1, 11, 95, 'g'),
-              (6, 1, 8, 42, 'mcg'),
-              (7, 1, 7, 0, 'mcg'),
-              (8, 1, 6, 0, 'mcg'),
-              (9, 1, 9, 13.7, 'mg'),
-              (10, 1, 3, 0.449, 'mg'),
-              (11, 1, 12, 1.25, 'g'),
-              (12, 1, 13, 1.37, 'g'),
-              (13, 2, 1, 222, 'kcal')
-        `);
-      });
-    }
+    null
   );
 }
 

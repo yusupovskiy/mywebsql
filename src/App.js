@@ -1,9 +1,9 @@
 import React from 'react';
-import { Route } from 'react-router-dom';
+import { Route, Redirect } from 'react-router-dom';
 
 import './App.css';
-import IngredientPage from './pages/Ingredient';
-import IngredientsPage from './pages/Ingredients';
+import IngredientPage from './pages/IngredientPage';
+import IngredientsPage from './pages/IngredientsPage';
 import { initDB } from './store/db';
 
 initDB();
@@ -11,6 +11,7 @@ initDB();
 function App() {
   return (
     <div className="App" style={{ display: 'flex' }}>
+      <Redirect from="/" to="/ingredients" exact />
       <div style={{ minWidth: '50%' }}>
         <Route path="/ingredients" component={IngredientsPage} />
       </div>
